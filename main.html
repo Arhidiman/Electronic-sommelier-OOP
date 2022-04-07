@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sommelier</title>
+	<link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+	<script>
+
+//Main section------------------------------------------------------
+		class Sommelier {
+			constructor() {
+				this.width = '900px';
+				this.height = '1200px';
+				this.backgroundColor = '#041E3E';
+				this.htmlElement = null;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('form');
+				obj.style.width = this.width;
+				obj.style.height = this.height;
+				obj.style.backgroundColor = this.backgroundColor;
+				obj.style.borderRadius = '10px';
+				obj.id = 'sommelier';
+				this.htmlElement = obj;
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				let header = new HeaderSection();
+				header.createObjectElement();
+				header.showObject(this.htmlElement);
+				header.createBlock();
+
+				let topSection = new TopSectionObject();
+				topSection.createObjectElement();
+				topSection.showObject(this.htmlElement);
+				topSection.createBlock();
+
+				let middleSection = new MiddleSectionObject();
+				middleSection.createObjectElement();
+				middleSection.showObject(this.htmlElement);
+				middleSection.createBlock();
+
+				let bottomSection = new BottomSection();
+				bottomSection.createObjectElement();
+				bottomSection.showObject(this.htmlElement);
+				bottomSection.createBlock();
+
+				let footer = new FooterSection();
+				footer.createObjectElement();
+				footer.showObject(this.htmlElement);
+				footer.createBlock();
+			}
+		}
+
+
+		class TopSectionObject {
+				constructor() {
+				this.htmlElement = null;
+	
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('section');
+				obj.className = 'block';
+				obj.style.borderRadius = '20px';
+				obj.className = 'section';
+				obj.id = 'top-section';
+				obj.style.position = 'absolute';
+				obj.style.top = '100px';
+
+				this.htmlElement = obj;
+			}
+		
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+			activate(block, list, compareList, counter, temp) {
+				block.list.forEach((elementObj)=>{
+					elementObj.htmlElement.classList.remove('active');
+					elementObj.htmlElement.classList.remove('selected');
+					elementObj.htmlElement.classList.add('inactive'); 
+				})
+				for(let i = 0; i < list.length; i++) {
+					for(let j = 0; j < compareList[counter].length; j++) {
+						if(list[i] == compareList[counter][j]) {
+							temp.push(block.list[i].htmlElement)
+							block.list[i].htmlElement.classList.add('active');
+							block.list[i].htmlElement.onclick = (e)=> {
+								for(let i = 0; i < temp.length; i++) {
+									temp[i].classList.remove('inactive')
+									temp[i].classList.remove('selected')
+									temp[i].classList.add('active')
+								}
+								e.target.classList.remove('active');
+								e.target.classList.add('selected');
+							}
+						}
+					}
+				}
+			}
+
+			createBlock() {
+				let block1 = new BlockObject(1, drinkwaresList, 'Бокал', 'видов');
+				block1.createObjectElement();
+				block1.showObject(this.htmlElement);
+				block1.createBlock();
+				
+				let block2 = new BlockObject(2, typesList, 'Тип', 'типа');
+				block2.createObjectElement();
+				block2.showObject(this.htmlElement);
+				block2.createBlock();	
+
+								let block3 = new BlockObject(2, strongnessList, 'Крепость', 'вида');
+				block3.createObjectElement();
+				block3.showObject(this.htmlElement);
+				block3.createBlock();
+				block3.list.forEach((element)=>{element.htmlElement.classList.add('active')})
+			
+
+				let block4 = new BlockObject(2, drinkBaseList, 'Основа', 'напитков');
+				block4.createObjectElement();
+				block4.showObject(this.htmlElement);
+				block4.createBlock();	
+
+				let deltaX = 0;
+				let slideDeltaX = 0;
+				let sliderCounter = 0;
+				let isMoveRight = true;
+				let isMoveLeft = false;
+				let temp = [];
+				let strongnessTemp = [];
+				let strongnessCounter = 0;
+
+				//При загрузке страницы: делает активными часть элементов соответствующих первому бакалу, при клике можно выбрать один из активных элементов
+				//Делает остальные элементы неактивными
+				block2.list.forEach((element)=>{(element.htmlElement.classList.add('inactive'))})
+				for(let i = 0; i < typesList.length; i++) {
+					for(let j = 0; j < drinkwaresDrinksObj[sliderCounter].length; j++) {
+						if(typesList[i] == drinkwaresDrinksObj[sliderCounter][j]) {
+							block2.list[i].htmlElement.classList.remove('inactive');
+							block2.list[i].htmlElement.classList.add('active');
+
+							temp.push(block2.list[i].htmlElement);
+							block2.list[i].htmlElement.onclick = (e)=> {
+								for(let i = 0; i < temp.length; i++) {
+									temp[i].classList.remove('selected')
+									temp[i].classList.add('active')
+								}
+								e.target.classList.remove('active')
+								e.target.classList.add('selected')
+							}
+						}
+					}
+				}
+
+				let me = this;
+				block1.leftArrow.htmlElement.style.cursor = 'pointer';
+				block1.leftArrow.htmlElement.onclick = ()=> {
+					let element = document.getElementById('shot');
+					let tempLength = temp.length;
+					if(sliderCounter !== 0) {
+						for(let i = 0; i < tempLength; i++) {temp[i].onclick = null};
+						for(let i = 0; i < tempLength; i++) {temp.splice(0, 1)};
+					}
+					if(isMoveLeft == true) {
+						let slideInterval = setInterval(()=>{
+							element.style.marginLeft = Number(element.style.marginLeft.substring(0, element.style.marginLeft.length - 2)) - 1 +'px';
+							isMoveLeft = false;
+							deltaX--;
+							if(deltaX % slideDeltaX == 0) {
+								clearInterval(slideInterval);
+								isMoveLeft = true;
+								sliderCounter--;
+								if(sliderCounter > 0) {isMoveRight = true;};
+								if(sliderCounter == 0) {isMoveLeft = false; isMoveRight = true};
+
+								//При клике влево: делает активными часть элементов соответствующих первому бокалу, при клике можно выбрать один из активных элементов
+								//Делает остальные элементы неактивными
+								console.log(me);
+								this.activate(block2, typesList, drinkwaresDrinksObj, sliderCounter, temp); 
+							}
+						}, 1)
+					}
+				}
+
+				slideDeltaX = this.getPixelsNumber(getComputedStyle(block1.container.containerElementsArr[0]).width) + this.getPixelsNumber(getComputedStyle(block1.container.containerElementsArr[1]).marginLeft)
+				block1.rightArrow.htmlElement.style.cursor = 'pointer';
+				let element = block1.container.containerElementsArr[0];
+				block1.rightArrow.htmlElement.onclick = ()=> {
+					let tempLength = temp.length;
+					if(sliderCounter !== drinkwaresDrinksObj.length - 1) {
+						for(let i = 0; i < tempLength; i++) {temp[i].onclick = null};
+						for(let i = 0; i < tempLength; i++) {temp.splice(0, 1)};
+					}
+					if(isMoveRight == true) {
+						let slideInterval = setInterval(()=>{
+							element.style.marginLeft = Number(element.style.marginLeft.substring(0, element.style.marginLeft.length - 2)) + 1 +'px';
+							isMoveRight = false;
+							deltaX++;
+							if(deltaX % slideDeltaX == 0) {
+								clearInterval(slideInterval);
+								isMoveRight = true;
+								sliderCounter++;
+								if(sliderCounter == block1.container.containerElementsArr.length - 1) {console.log(sliderCounter); isMoveRight = false; isMoveLeft = true};
+								if(sliderCounter <block1.container.containerElementsArr.length - 1) {console.log(sliderCounter); isMoveLeft = true} ;
+									
+								//При клике вправо: делает активными часть элементов соответствующих первому бокалу, при клике можно выбрать один из активных элементов,
+								//Делает остальные элементы неактивными
+								this.activate(block2, typesList, drinkwaresDrinksObj, sliderCounter, temp);
+							}
+						}, 1)
+					}
+				}
+			
+				//При загрузке страницы: делает активными часть элементов соответствующих  элементу списка, при клике можно выбрать один из активных элементов,
+				//Делает остальные элементы неактивными
+				this.activate(block4, drinkBaseList, strongnessObj, strongnessCounter, strongnessTemp);
+
+				for(let j = 0; j < block3.list.length; j++) {
+					block3.list[j].htmlElement.onclick = (e)=> {
+						strongnessCounter = j;
+						let strongnessTempLength = strongnessTemp.length;
+						for(let t = 0; t < strongnessTempLength; t++) {strongnessTemp[t].onclick = null};
+						for(let t = 0; t < strongnessTempLength; t++) {strongnessTemp.splice(0, 1)};
+							
+						//Выделение одного элемента списка "Крепость"
+						for(let i = 0; i < block3.list.length; i++) {
+							block3.list[i].htmlElement.style.background = '';
+							block3.list[i].htmlElement.style.color = '#8B8C8D';
+						}
+						e.target.style.background = 'linear-gradient(to right, #CBCBCB, #E5E5E5)';
+						e.target.style.color = '#4B74AF';
+
+						//При выделении одного элемента списка "Крепость": делает активными часть элементов соответствующих  элементу списка, при клике можно выбрать один из активных элементов,
+						//Делает остальные элементы неактивными
+						this.activate(block4, drinkBaseList, strongnessObj, strongnessCounter, strongnessTemp);
+					}
+				}
+			}
+		}
+
+		class MiddleSectionObject {
+			constructor() {
+				this.htmlElement = null;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('section');
+				obj.className = 'block';
+				obj.style.borderRadius = '20px';
+				obj.style.position = 'absolute';
+				obj.className = 'section';
+				obj.id = 'middle-section';
+				this.htmlElement = obj;
+				// console.log(this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-header')[0]).height) + 'px');
+				obj.style.top =  ((this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-header')[0]).height)) +  (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-body')[0]).height)) + (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block')[0]).margin))) + 120 + 'px' ;
+
+			}
+		
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				let block1 = new BlockObject(3, ingredients, 'Ингридиенты');
+				block1.createObjectElement();
+				block1.showObject(this.htmlElement);
+				block1.createBlock();
+
+				let properties = new drinkPropertiesObject();
+				properties.createObjectElement();
+				properties.showObject(this.htmlElement);
+				properties.createBlock();
+
+			}
+		}
+
+		class drinkPropertiesObject {
+			constructor() {
+				this.htmlElement = null;
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'properties';
+				// obj.style.flexWrap = 'wrap';
+
+				this.htmlElement = obj;
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+
+			select(object) {
+				for(let i = 0; i < object.list.length; i++) {
+					object.list[i].htmlElement.classList.add('active');
+					object.list[i].htmlElement.onclick = (e)=> {
+						for(let j = 0; j < object.list.length; j++) {
+							object.list[j].htmlElement.classList.remove('selected');
+						}
+						console.log(e.target.style);
+						e.target.classList.add('selected');
+					}
+				}
+			}
+
+
+			createBlock() {
+				let block1 = new BlockObject(4, portionScale, 'Порции', '', '+ 2 порции');
+				block1.createObjectElement();
+				block1.showObject(this.htmlElement);
+				block1.createBlock();
+
+				let block2 = new BlockObject(4, timeScale, 'Время', '', 'увеличенное время');
+				block2.createObjectElement();
+				block2.showObject(this.htmlElement);
+				block2.createBlock();
+
+				let block3 = new BlockObject(4, complexityScale, 'Сложность', '', 'вне категорий');
+				block3.createObjectElement();
+				block3.showObject(this.htmlElement);
+				block3.createBlock();
+
+				let block4 = new BlockObject(2, methods, 'Метод', 'Методов');
+				block4.createObjectElement();
+				block4.showObject(this.htmlElement);
+				block4.createBlock();
+				block4.headerElement.style.backgroundColor = 'rgb(151, 116, 201)';
+				block4.bodyElement.style.height = block1.bodyElement.style.height; 
+				this.select(block4);
+
+				let gradientScale = document.getElementsByClassName('scale-bar')[2];
+				gradientScale.className = 'gradient-scale-bar';
+				gradientScale.style.height = '4px';
+				gradientScale.style.background = 'linear-gradient(to right, green, yellow, red)';
+			}
+		}
+
+		class BottomSection {
+			constructor() {
+				this.htmlElement = null;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('section');
+				obj.className = 'block';
+				obj.style.borderRadius = '20px';
+				obj.style.position = 'absolute';
+				obj.className = 'section';
+				obj.id = 'bottom-section';
+				obj.style.top =  ((this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-header')[0]).height)) * 2 +  (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-body')[0]).height))*2 + (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block')[0]).margin))) + 160 + 'px' ;
+				this.htmlElement = obj;
+			}
+		
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+
+			switchAll(block) {
+				for(let i = 0; i < block.list.length; i++) {
+					block.list[i].htmlElement.className = 'checkbox';
+					block.list[i].htmlElement.onclick = ()=> {
+						if(block.list[i].htmlElement.className == 'checkbox') {
+							block.list[i].htmlElement.classList.remove('checkbox');
+							block.list[i].htmlElement.classList.add('checkbox-active');
+						} else if(block.list[i].htmlElement.className == 'checkbox-active') {
+							block.list[i].htmlElement.classList.remove('checkbox-active');
+							block.list[i].htmlElement.classList.add('checkbox');
+						}
+					}	
+				}
+			}
+
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				let block1 = new BlockObject(2, decorations, 'Украшения', 'Видов', '');
+				block1.createObjectElement();
+				block1.showObject(this.htmlElement);
+				block1.createBlock();
+				this.switchAll(block1);
+
+
+				let block2 = new BlockObject(2, tags, 'Тэги', 'тэгов');
+				block2.createObjectElement();
+				block2.showObject(this.htmlElement);
+				block2.createBlock();
+				this.switchAll(block2);
+
+				let block3 = new BlockObject(5, '', 'Описание', '', '');
+				block3.createObjectElement();
+				block3.showObject(this.htmlElement);
+				block3.createBlock();
+				this.switchAll(block2);
+
+
+
+			}
+		}
+
+		class HeaderSection {
+			constructor() {
+				this.htmlElement = null;
+
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('header');
+				obj.id = 'header';
+				obj.className = 'section';
+				this.htmlElement = obj;
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				let mainTitle = document.createElement('h1');
+				mainTitle.innerHTML = 'Электронный сомелье';
+				this.htmlElement.appendChild(mainTitle);
+			}
+		}
+
+		class FooterSection {
+			constructor() {
+				this.htmlElement = null;
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('footer');
+				obj.id = 'footer';
+				obj.className = 'section';
+				obj.style.position = 'absolute';
+				obj.style.top =  ((this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-header')[0]).height)) * 3 +  (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-body')[0]).height))*3 + (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block')[0]).margin))) + 220 + 'px' ;
+				this.htmlElement = obj;
+				obj.style.width = this.getPixelsNumber(getComputedStyle(document.getElementById('sommelier')).width) + 'px';
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				let doubleButton = new doubleButtonObject();
+				doubleButton.createObjectElement();
+				doubleButton.createBlock();
+				doubleButton.showObject(this.htmlElement);
+			}
+		}
+
+		class BlockObject {
+			constructor(type, input, headerTitle, headerSubtitle, text) {
+				this.htmlElement = null;
+				this.headerElement = null;
+				this.bodyElement = null;
+				this.type = type;
+				this.input = input;
+				this.headerTitle = headerTitle;
+				this.text = text;
+				this.headerSubtitle = headerSubtitle;
+				this.leftArrow = null;
+				this.container = null;
+				this.rightArrow = null;
+				if(this.type == 2) {this.list = null};
+	
+
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'block';
+				obj.style.borderRadius = '20px';
+				obj.style.width = this.width;
+				obj.style.margin = this.width;
+
+				this.htmlElement = obj;
+
+			}
+			changeState(FieldName, fieldValue){
+
+			}
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				let blockHeader = new BlockHeaderObject(this.type, this.input, this.headerTitle, this.headerSubtitle);
+				blockHeader.createObjectElement();
+				blockHeader.showObject(this.htmlElement);
+				blockHeader.createBlock();
+				this.headerElement = blockHeader.htmlElement
+
+				
+				let blockBody = new BlockBodyObject(this.type, this.input, this.text);
+				blockBody.createObjectElement();
+				blockBody.showObject(this.htmlElement);
+				blockBody.createBlock();
+				this.bodyElement = blockBody.htmlElement;
+	
+
+				this.list = blockBody.list;
+				this.leftArrow = blockBody.leftArrow;
+				this.container = blockBody.container;
+				this.rightArrow = blockBody.rightArrow;;
+
+
+				if(this.type == 3 || this.type == 5) {
+					this.htmlElement.style.width = ((this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-body')[0]).width)*2) + (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block')[0]).margin)*2)) + 'px'; 
+				}
+			}
+		}
+
+		class BlockHeaderObject {
+			constructor(type, input, headerTitle, headerSubtitle) {
+				this.htmlElement = null;
+				this.type = type;
+				this.input = input;
+				this.headerTitle = headerTitle;
+				this.headerSubtitle = headerSubtitle;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'block-header';
+				this.htmlElement = obj;
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			createBlock() {
+				let headerTItle = new BlockHeaderTitle(this.headerTitle);
+				headerTItle.createObjectElement();
+				headerTItle.showObject(this.htmlElement);
+
+				let types = new NumberOfTypes(this.type, this.input, this.headerSubtitle);
+				types.createObjectElement();
+				types.showObject(this.htmlElement);
+
+				if(this.type == 4) {
+					this.htmlElement.style.backgroundColor = '#9774C9';
+				}
+			}
+		}
+
+		class BlockBodyObject {
+			constructor(type, input, text) {
+				this.htmlElement = null;
+				this.type = type;
+				this.input = input;
+				this.text = text;
+				this.leftArrow = null;
+				this.container = null;
+				this.rightArrow = null;
+				this.topBody = null;
+				this.bottomBody = null;
+				if(this.type == 2) {this.list = null;};
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'block-body';
+				this.htmlElement = obj;
+				if(this.type == 4) {
+					this.topBody = document.createElement('div');
+					this.topBody.className ='top-block-body';
+
+					this.bottomBody = document.createElement('div');
+					this.bottomBody.className ='bottom-block-body';
+				}
+			}
+
+			createTopHalf() {
+				let obj = document.createElement('div');
+				obj.className = 'top-block-body';
+				this.htmlElement.appendChild(obj);
+			}
+
+			createBottomHalf() {
+				let obj = document.createElement('div');
+				obj.className = 'bottom-block-body';
+				this.htmlElement.appendChild(obj);
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				//Animation variables
+				// let deltaX = 0;
+				// let slideDeltaX = 0;
+				// let sliderCounter = 0;
+				// let isMoveRight = true;
+				// let isMoveLeft = false;
+
+				// Left arrow object
+				if(this.type == 1) {
+					let leftArrow = new ArrowObject();
+					leftArrow.createObjectElement();
+					leftArrow.showObject(this.htmlElement);
+					this.leftArrow = leftArrow;
+					
+					leftArrow.htmlElement.addEventListener('mouseover', (e)=>{
+						e.target.style.borderRight = '10px solid #707070';
+					});
+					leftArrow.htmlElement.addEventListener('mouseout', (e)=>{
+						e.target.style.borderRight = '10px solid #93969A';
+					} )
+					leftArrow.htmlElement.addEventListener('mousedown', (e)=>{
+						e.target.style.borderRight = '10px solid #2E2E2E';
+					} )
+					leftArrow.htmlElement.addEventListener('mouseup', (e)=>{
+						e.target.style.borderRight = '10px solid #707070';
+					} );
+
+
+				}
+				// Container object
+				if(this.type !== 4) {
+				let container = new blockContainerObject(this.type, this.input);
+				container.createObjectElement();
+				container.showObject(this.htmlElement);
+				container.createBlock();
+				this.container = container;
+					if(this.type == 2) {
+						this.htmlElement.style.display = 'block';
+						this.list = container.list;
+					}
+				} else if(this.type == 4) {
+					let topContainer = new blockContainerObject(this.type, this.input);
+					topContainer.createObjectElement();
+					topContainer.createBlock()
+					topContainer.htmlElement.style.height = '100%'
+					topContainer.htmlElement.style.width = '85%'
+
+					let bottomContainer = new blockContainerObject(this.type, this.input);
+					bottomContainer.createObjectElement();
+					bottomContainer.htmlElement.style.height = '100%'
+					bottomContainer.htmlElement.style.width = '85%';
+					let checkbox = new CheckboxObject(this.text);
+					checkbox.createObjectElement();
+					checkbox.showObject(bottomContainer.htmlElement);
+
+					this.topBody.appendChild(topContainer.htmlElement);
+					this.bottomBody.appendChild(bottomContainer.htmlElement);
+
+					this.htmlElement.appendChild(this.topBody);
+					this.htmlElement.appendChild(this.bottomBody);
+
+					this.htmlElement.style.display = 'block';
+					this.htmlElement.style.backgroundColor = '#B7B7B7';
+
+					
+				}
+				
+				//Right arrow object
+				if(this.type == 1) {	
+					let rightArrow = new ArrowObject();
+					rightArrow.createObjectElement();
+					rightArrow.htmlElement.style.borderLeft = '10px solid #93969A';
+					rightArrow.htmlElement.style.borderRight = '0px';
+					rightArrow.showObject(this.htmlElement);
+					this.rightArrow = rightArrow;
+
+					rightArrow.htmlElement.addEventListener('mouseover', (e)=>{
+						e.target.style.borderLeft = '10px solid #707070';
+					});
+					rightArrow.htmlElement.addEventListener('mouseout', (e)=>{
+						e.target.style.borderLeft = '10px solid #93969A';
+					} )
+					rightArrow.htmlElement.addEventListener('mousedown', (e)=>{
+						e.target.style.borderLeft = '10px solid #2E2E2E';
+					} )
+					rightArrow.htmlElement.addEventListener('mouseup', (e)=>{
+						e.target.style.borderLeft = '10px solid #707070';
+					});
+				}
+
+				if(this.type == 4) {
+					this.htmlElement.style.height = ((this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block-body')[0]).height)/2) - (this.getPixelsNumber(getComputedStyle(document.getElementsByClassName('block')[0]).margin)*2)) + 'px'; 		
+				}
+			}
+		}
+
+		//header block---------------------------------------------------------
+		class BlockHeaderTitle {
+			constructor(headerTitle) {
+				this.htmlElement = null;
+				this.headerTitle = headerTitle;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('h2');
+				this.htmlElement = obj;
+				obj.innerHTML = this.headerTitle;
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+		class NumberOfTypes {
+			constructor(type, input, headerSubtitle) {
+				this.htmlElement = null;
+				this.type = type;
+				this.input = input;
+				this.headerSubtitle = headerSubtitle;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('p');
+				this.htmlElement = obj;
+				obj.className = 'types-number';
+
+				if(this.type !== 3 && this.type !== 4 && this.type !== 5) {
+				// obj.innerHTML = `${this.input.length } Тип${( this.input.length <= 20 && this.input.length >= 10 ) ? 'ов' : (((this.input.length % 10 == 2) || (this.input.length % 10 == 2) || (this.input.length % 10 == 3) || (this.input.length % 10 == 4)) ? 'а' : 'ов')} ` ;
+				obj.innerHTML = `${this.input.length} ${this.headerSubtitle}`;
+				}
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+		//body block-----------------------------------------------------------
+		class ArrowObject {
+			constructor() {
+				this.htmlElement = null;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'arrow';
+				this.htmlElement = obj;
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+
+		class blockContainerObject {
+			constructor(type, input) {
+				this.type = type;
+				this.input = input;
+				this.htmlElement = null;
+				if (this.type == 1) {this.containerElementsArr = []};
+				if (this.type == 2) {this.list = null};
+
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'container';
+				this.htmlElement = obj;
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			getPixelsNumber(pixels) {
+				return(Number(pixels.substring(0, pixels.length - 2)));
+			}
+
+			createBlock() {
+				if(this.type == 1) { 
+					for(let i = 0; i < drinkwaresList.length; i++) {
+						let drinkware = new DrinkwareObject(this.input[i].id, this.input[i].name, this.input[i].url, this.input[i].description);
+						drinkware.createObjectElement();
+						drinkware.showObject(this.htmlElement);
+						drinkware.createBlock(this.input[i].id, this.input[i].name);
+						this.containerElementsArr.push(drinkware.htmlElement);
+					}
+
+					this.containerElementsArr[0].style.marginLeft = -(this.getPixelsNumber(getComputedStyle(this.containerElementsArr[0]).width) * (this.containerElementsArr.length - 1) + this.getPixelsNumber(getComputedStyle(this.containerElementsArr[0]).marginLeft) * (this.containerElementsArr.length - 1)) + 'px' ;
+				}
+
+				else if(this.type == 2) {
+					//List object generation
+					let list = new ListObject(this.input);
+					list.createObjectElement();
+					list.createItemsArr();
+					list.showObject(this.htmlElement);
+					this.list = list.listItems;
+
+					// Creating scrollbox and hiding it behind the body block
+					if(document.getElementsByClassName('scale-bar').length == 3) {
+					this.htmlElement.style.height = '76.5px';
+					}
+					this.htmlElement.style.overflowY = 'scroll';
+					this.htmlElement.style.width = '110%';
+
+					//Defining of scrollbox disposition according to content width
+					let containerWidth = this.getPixelsNumber((getComputedStyle(this.htmlElement).width));
+					let listWidth = this.getPixelsNumber((getComputedStyle(list.htmlElement).width));
+					let scrollRightMargin = 15;
+					let marginRight = (containerWidth - (listWidth ) - scrollRightMargin) + 'px';
+					list.htmlElement.style.marginRight = marginRight;	
+
+					//Scrollbox object generation
+					let contentHeight = this.getPixelsNumber(getComputedStyle(list.listItems[3].htmlElement).height)*list.listItems.length + 15;
+					let containerHeight = this.getPixelsNumber(getComputedStyle(this.htmlElement).height);
+					let ratio = containerHeight/contentHeight;
+					let scrollBarHeight = containerHeight - 30;
+					let scrollerHeight = scrollBarHeight*ratio;
+					let contentMaxDeltaY = contentHeight - containerHeight;
+					let scrollerMaxDeltaY = scrollBarHeight - scrollerHeight;
+					let maxScrollerBottom = scrollerMaxDeltaY/2;
+					let minScrollerBottom = -scrollerMaxDeltaY/2;
+					let delta = 0;
+					let scrollTop = 0;
+
+					// console.log(contentHeight);
+					// console.log(containerHeight);
+					// console.log(this.htmlElement);
+					
+					if (contentHeight > containerHeight) {
+						let scrollBox = new scrollObject();
+						scrollBox.createObjectElement();
+						scrollBox.showObject(this.htmlElement);
+						scrollBox.createBlock();
+						scrollBox.htmlElement.style.position = 'sticky';
+						scrollBox.htmlElement.style.top = '0px';
+
+						//Defining scrollbar height according to content height
+						scrollBox.scroller.htmlElement.style.height = scrollerHeight + 'px';
+						scrollBox.scroller.htmlElement.style.bottom = maxScrollerBottom + 'px';
+
+						//Scroller animation by wheel
+						this.htmlElement.addEventListener('wheel', (e)=> {		
+							delta = delta + e.deltaY;	
+							let displacementRatio = Math.abs(e.deltaY/contentMaxDeltaY);				
+							let bottom = this.getPixelsNumber(scrollBox.scroller.htmlElement.style.bottom);
+							if((delta < contentMaxDeltaY) && e.deltaY > 0) {
+								scrollBox.scroller.htmlElement.style.bottom = bottom - scrollerMaxDeltaY*displacementRatio + 'px'; 
+							} else if(e.deltaY > 0) {
+								delta = delta - e.deltaY;
+								let tempDeltaY = contentMaxDeltaY - delta;
+								displacementRatio = tempDeltaY/contentMaxDeltaY;
+								scrollBox.scroller.htmlElement.style.bottom = (Math.round(this.getPixelsNumber(scrollBox.scroller.htmlElement.style.bottom)) == Math.round(minScrollerBottom) ? scrollBox.scroller.htmlElement.style.bottom : ((bottom - scrollerMaxDeltaY*displacementRatio)) + 'px');
+								delta = contentMaxDeltaY;
+							} else if(e.deltaY < 0 && (delta - e.deltaY) >= -e.deltaY) {
+								scrollBox.scroller.htmlElement.style.bottom = (Math.round(this.getPixelsNumber(scrollBox.scroller.htmlElement.style.bottom)) == Math.round(maxScrollerBottom) ? scrollBox.scroller.htmlElement.style.bottom : ((bottom + scrollerMaxDeltaY*displacementRatio)) + 'px');
+							} 
+							else if(delta < 0) {
+								delta = delta - e.deltaY;
+								let tempDeltaY =  delta;
+								displacementRatio = tempDeltaY/contentMaxDeltaY;
+								scrollBox.scroller.htmlElement.style.bottom = (Math.round(this.getPixelsNumber(scrollBox.scroller.htmlElement.style.bottom)) == Math.round(maxScrollerBottom) ? scrollBox.scroller.htmlElement.style.bottom : ((bottom + scrollerMaxDeltaY*displacementRatio)) + 'px');
+								delta = 0;
+							}
+							console.log(delta)
+						});
+
+						//Scroller animation by arrow click
+						let displasmentByClick = 75;
+						scrollBox.bottomArrow.htmlElement.onclick = ()=> {
+							let bottom = this.getPixelsNumber(scrollBox.scroller.htmlElement.style.bottom);
+							if((contentMaxDeltaY - delta >= displasmentByClick)) {
+							let displacementRatio = displasmentByClick/contentMaxDeltaY;
+							this.htmlElement.scrollTop = this.htmlElement.scrollTop + displasmentByClick;
+							scrollBox.scroller.htmlElement.style.bottom = bottom - scrollerMaxDeltaY*displacementRatio + 'px'; 
+							console.log('delta = ' + delta);
+							console.log('scrollTop = ' + this.htmlElement.scrollTop);
+							console.log('contentMaxDeltaY = ' + contentMaxDeltaY);
+							}
+							if((contentMaxDeltaY - delta < displasmentByClick)) {
+								let displacementRatio = (contentMaxDeltaY - this.htmlElement.scrollTop)/contentMaxDeltaY;
+								this.htmlElement.scrollTop = this.htmlElement.scrollTop + displasmentByClick
+								scrollBox.scroller.htmlElement.style.bottom = bottom - scrollerMaxDeltaY*displacementRatio + 'px'; 
+								console.log('delta = ' + delta);
+								console.log('scrollTop = ' + this.htmlElement.scrollTop);
+								console.log('contentMaxDeltaY = ' + contentMaxDeltaY);
+
+							} 
+							delta = delta + displasmentByClick;
+							if(delta >= contentMaxDeltaY) {delta = contentMaxDeltaY}
+							console.log('delta = ' + delta);
+						}
+
+						scrollBox.topArrow.htmlElement.onclick = ()=> {
+							let bottom = this.getPixelsNumber(scrollBox.scroller.htmlElement.style.bottom);
+							if(delta >= displasmentByClick) {
+							let displacementRatio = displasmentByClick/contentMaxDeltaY;
+							this.htmlElement.scrollTop = this.htmlElement.scrollTop - displasmentByClick;
+							scrollBox.scroller.htmlElement.style.bottom = bottom + scrollerMaxDeltaY*displacementRatio + 'px'; 
+							console.log('delta = ' + delta);
+							console.log('scrollTop = ' + this.htmlElement.scrollTop);
+							console.log('displasmentByClick = ' + displasmentByClick);
+							console.log('contentMaxDeltaY = ' + contentMaxDeltaY);
+							}
+							if((delta < displasmentByClick && this.htmlElement.scrollTop !== 0)) {
+								let displacementRatio = delta/contentMaxDeltaY;
+								this.htmlElement.scrollTop = this.htmlElement.scrollTop - displasmentByClick
+								scrollBox.scroller.htmlElement.style.bottom = bottom + scrollerMaxDeltaY*displacementRatio + 'px'; 
+								console.log('delta = ' + delta);
+								console.log('scrollTop = ' + this.htmlElement.scrollTop);
+								console.log('contentMaxDeltaY = ' + contentMaxDeltaY);
+								console.log('displacementRatio = ' + displacementRatio);
+								delta = 0;
+							} 
+							if(delta !== 0) {delta = delta - displasmentByClick;}
+							// if(delta < 0) {delta = 0};
+							console.log('delta = ' + delta);
+						}
+					}
+				}
+
+				else if(this.type == 3) {
+					let ingredientsCounter = 0;
+					this.htmlElement.style.width = '90%';
+					this.htmlElement.style.display = 'block';
+
+					let ingredientsList = new ListObject();
+					ingredientsList.createObjectElement();
+					ingredientsList.showObject(this.htmlElement)
+					ingredientsList.htmlElement.id = 'ingredients';
+
+					let selectList = new ListObject(this.input);
+					selectList.createSelectElement();
+					selectList.createOptionsArr();
+					selectList.showObject(this.htmlElement);
+					this.list = selectList.listItems;
+
+					selectList.htmlElement.onchange = ()=> {
+						ingredientsCounter++;
+						let item = document.createElement('li');
+						item.className = 'ingredient';
+						item.innerHTML = `${ingredientsCounter}. ${selectList.htmlElement.options[selectList.htmlElement.selectedIndex].innerHTML}`;
+						ingredientsList.htmlElement.appendChild(item);
+						selectList.htmlElement.selectedIndex = 0;
+					}
+				}
+
+				else if(this.type == 4 && document.getElementsByClassName('scale-bar').length < 3) {
+					this.htmlElement.style.height = '100%';
+					this.htmlElement.style.width = '85%';
+					let scale = new ScaleSliderObject(this.input);
+					scale.createObjectElement();
+					scale.createBlock();
+					scale.showObject(this.htmlElement);
+					for(let i = 0; i < scale.listItems.length; i++) {
+						scale.listItems[i].style.cursor = 'pointer';
+						scale.listItems[i].onclick = (e)=> {
+							for(let j = 0; j < scale.listItems.length; j++) {
+								scale.listItems[j].classList.remove('marker');
+								scale.listItems[j].style.background = '';
+							}
+							e.target.style.background = 'linear-gradient(to bottom, #CBCBCB, #E5E5E5)';
+							e.target.classList.add('marker');
+						}
+					}
+				}
+
+				else if(this.type == 5) {
+					let description = new DescriptionObject();
+					description.createObjectElement();
+					description.createBlock();
+					description.showObject(this.htmlElement);
+					this.htmlElement.style.height = '95%';
+					this.htmlElement.style.width = '85%';
+				}
+
+				
+			}
+		}
+
+
+		//Drinkware section: type 1 only objects
+		class DrinkwareObject {
+			constructor(id, name, url, description) {
+				this.htmlElement = null;
+				this.id = id;
+				this.name = name;
+				this.url = url;
+				this.description = description;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'drinkware';
+				obj.id = this.id;
+				this.htmlElement = obj;
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			createBlock(fieldName, fieldValue) {
+				let drinkware = new DrinkwareItemObject(this.name, this.url);
+				drinkware.createObjectElement();
+				drinkware.showObject(this.htmlElement);
+
+				let description = new DrinkwareDescription(this.description);
+				description.createObjectElement();
+				description.showObject(this.htmlElement);
+
+				drinkware.htmlElement.onclick = (event)=>{
+					drinkware.changeState(fieldName, fieldValue)
+					console.log(event.target.name)
+				}
+			}
+		}
+
+		class DrinkwareItemObject {
+			constructor(name, url) {
+				this.htmlElement = null;
+				this.name = name;
+				this.url = url;
+
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('img');
+				this.htmlElement = obj;
+				obj.name = this.name
+				obj.src = this.url;
+				obj.className = 'slider-item';
+			}
+
+			changeState(fieldName, fieldValue){
+				this[fieldName] = fieldValue;
+				if (this.htmlElement.getAttribute(fieldName) != null){
+					this.htmlElement[fieldName] = fieldValue
+				}
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+		class DrinkwareDescription {
+			constructor(description) {
+				this.htmlElement = null;
+				this.name = 'Стопка'
+				this.description = description;
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('h3');
+				this.htmlElement = obj;
+				obj.innerHTML = this.description
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+
+		//Lists section: type 2, 3, 5 only objects
+		class ListObject {
+			constructor(input) {
+				this.htmlElement = null;
+				this.listItems = [];
+				this.listItems2 = [];
+				this.input = input;
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('ul');
+				obj.className = 'list';
+				this.htmlElement = obj;
+			}
+
+			createSelectElement () {
+				let obj = document.createElement('select');
+				obj.className = 'list';
+				this.htmlElement = obj;
+			}
+
+			createItemsArr() {
+				for(let j = 0; j < this.input.length; j++) {
+					let item = new ListItemObject();
+					item.createObjectElement();
+					item.htmlElement.innerHTML = this.input[j];
+					item.showObject(this.htmlElement);
+					this.listItems.push(item);
+				}
+
+
+
+				// for(let j = 0; j < typesList2.length; j++) {
+				// 	let item = new ListItemObject();
+				// 	item.createObjectElement();
+				// 	item.htmlElement.innerHTML = typesList2[j];
+				// 	this.listItems2.push(item);
+				// }
+ 			}
+
+			createOptionsArr() {
+				for(let j = 0; j < this.input.length; j++) {
+					let item = new ListItemObject();
+					item.createOptionElement();
+					item.htmlElement.innerHTML = this.input[j];
+					item.showObject(this.htmlElement);
+					this.listItems.push(item);
+				}
+ 			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+
+			hide(object) {
+				object.htmlElement.remove();
+			}
+
+
+			// erase(l) {
+			// 			console.log(this.listItems[i]);
+			// 			this.hide(this.listItems[i]);
+			// 			this.listItems.splice(i, 1, this.listItems2[i]);
+			// 			// console.log(this.listItems);
+			// 			// console.log(this.listItems2);
+			// 			console.log(this.listItems2[i].htmlElement);
+			// 			console.log(this.listItems[i].htmlElement);
+			// 			this.htmlElement.insertBefore(this.listItems2[i].htmlElement, this.listItems[i].htmlElement);
+			// 			if(l >= 0) {this.redraw(l - 1)};
+			// }
+
+			redraw(l){
+				for (let i = 0; i <l ; i++){
+					try{
+						this.hide(this.listItems[i]);
+						// this.listItems.splice(i, 1, this.listItems2[i]);
+					}
+					catch(ex){
+						console.log(ex);
+					}
+				}
+				for(let j = 0; j < this.listItems2.length; j++) {
+					
+					this.listItems2[j].showObject(this.htmlElement);
+				}
+			}
+
+			createBlock() {	
+			}
+		}
+
+		class ListItemObject {
+
+			constructor() {
+				this.htmlElement = null;
+
+			}
+
+			createObjectElement() {
+				let obj = document.createElement('li');
+				this.htmlElement = obj;
+			}
+
+			createCheckBoxElement() {
+				let obj = document.createElement('li');
+				this.htmlElement = obj;
+			}
+
+			createOptionElement() {
+				let obj = document.createElement('option');
+				this.htmlElement = obj;
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+			
+
+
+		class scrollObject {
+			constructor() {
+				this.htmlElement = null;
+				this.scroller = null;
+				this.topArrow = null;
+				this.bottomArrow = null;
+
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('li');
+				obj.className = 'scroll'
+				this.htmlElement = obj;
+		
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			createBlock() {
+				// Top arrow generation
+				let topArrow = new ArrowObject();
+				topArrow.createObjectElement();
+				topArrow.showObject(this.htmlElement);
+				topArrow.htmlElement.style.borderRight = '5px solid transparent';
+				topArrow.htmlElement.style.borderLeft = '5px solid transparent';
+				topArrow.htmlElement.style.borderBottom = '10px solid #93969A';
+				this.topArrow = topArrow;
+
+				// Top arrow animation
+				topArrow.htmlElement.addEventListener('mouseover', (e)=>{
+					e.target.style.borderBottom = '10px solid #707070';
+					e.target.style.cursor = 'pointer';
+				});
+				topArrow.htmlElement.addEventListener('mouseout', (e)=>{
+					e.target.style.borderBottom  = '10px solid #93969A';
+				} )
+				topArrow.htmlElement.addEventListener('mousedown', (e)=>{
+					e.target.style.borderBottom  = '10px solid #2E2E2E';
+				} )
+				topArrow.htmlElement.addEventListener('mouseup', (e)=>{
+				
+					e.target.style.borderBottom  = '10px solid #707070';
+				} )
+
+
+				let scroller = new ScrollerObject();
+				scroller.createObjectElement();
+				scroller.showObject(this.htmlElement);
+				this.scroller = scroller;
+
+				// Top arrow generation
+				let bottomArrow = new ArrowObject();
+				bottomArrow.createObjectElement();
+				bottomArrow.showObject(this.htmlElement);
+				bottomArrow.htmlElement.style.borderRight = '5px solid transparent';
+				bottomArrow.htmlElement.style.borderLeft = '5px solid transparent';
+				bottomArrow.htmlElement.style.borderTop = '10px solid #93969A';
+				this.bottomArrow = bottomArrow;
+				
+				// Top arrow animation
+				bottomArrow.htmlElement.addEventListener('mouseover', (e)=>{	
+					e.target.style.borderTop = '10px solid #707070';
+					e.target.style.cursor = 'pointer';
+				});
+				bottomArrow.htmlElement.addEventListener('mouseout', (e)=>{	
+					e.target.style.borderTop = '10px solid #93969A';
+				} )
+				bottomArrow.htmlElement.addEventListener('mousedown', (e)=>{
+					e.target.style.borderTop = '10px solid #2E2E2E';
+				} )
+				bottomArrow.htmlElement.addEventListener('mouseup', (e)=>{
+					e.target.style.borderTop = '10px solid #707070';
+				} )
+			}
+		}
+
+		class ScrollerObject {
+			constructor() {
+				this.htmlElement = null;
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('li');
+				obj.className = 'scroll-bar';
+				this.htmlElement = obj;
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+
+
+		class ScaleSliderObject {
+			constructor(input) {
+				this.htmlElement = null;
+				this.input = input;
+				this.listItems = []
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'scale-box ';
+				this.htmlElement = obj;
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			createBlock() {
+				let scaleValues = document.createElement('ul');
+				scaleValues.className = 'scale-values';
+				this.htmlElement.appendChild(scaleValues);
+
+				for(let i = 0; i < this.input.length; i++) {
+					let value = document.createElement('li');
+					value.innerHTML = this.input[i];
+					value.className = 'value';
+					this.listItems.push(value);
+					scaleValues.appendChild(value);
+				}
+
+				let scaleBar = document.createElement('div');
+				scaleBar.className = 'scale-bar';
+				this.htmlElement.appendChild(scaleBar);
+			}
+		}
+
+
+		class CheckboxObject {
+			constructor(text) {
+				this.htmlElement = null;
+				this.text = text;
+				this.listItems = []
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('li');
+				obj.className = 'checkbox';
+				obj.innerHTML = this.text;
+				this.htmlElement = obj;
+				this.switch(obj);
+
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+
+			switch(element) {
+				element.onclick = ()=> {
+					if(element.className == 'checkbox') {
+						element.classList.remove('checkbox');
+						element.classList.add('checkbox-active');
+					} else if(element.className == 'checkbox-active') {
+						element.classList.remove('checkbox-active');
+						element.classList.add('checkbox');
+					}
+				}
+			}
+		}
+
+		class DescriptionObject {
+			constructor() {
+				this.htmlElement = null;
+				this.leftButton = null;
+				this.rightButton = null;
+
+				
+			}
+			createObjectElement() {
+				let obj = document.createElement('form');
+				// obj.className = 'input';
+				this.htmlElement = obj;
+
+			}
+
+			changeField() {
+				this.leftButton.onclick = (e)=> {
+
+						document.getElementsByClassName('instruction')[0].style.display = 'none';
+						document.getElementsByClassName('instruction')[1].style.display = 'block';
+						document.getElementsByClassName('tab')[1].classList.remove('tab-selected')
+						e.target.classList.add('tab-selected');
+
+				}
+				this.rightButton.onclick = (e)=> {
+						document.getElementsByClassName('instruction')[0].style.display = 'block';
+						document.getElementsByClassName('instruction')[1].style.display = 'none';
+						document.getElementsByClassName('tab')[0].classList.remove('tab-selected')
+						e.target.classList.add('tab-selected');
+				}				
+			}
+
+			createNameInput() {
+				let name = document.createElement('input');
+				name.className = 'input';
+				name.placeholder = 'Название';
+				this.htmlElement.appendChild(name);
+			}
+
+			createAlternativeNameInput() {
+				let name = document.createElement('input');
+				name.className = 'input';
+				name.placeholder = 'Альтернативное название через запятую';
+				this.htmlElement.appendChild(name);
+			}
+
+			createDescriptionField() {
+
+				let leftButton = document.createElement('div');
+				leftButton.classList.add('tab');
+				leftButton.classList.add('tab-selected');
+				// leftButton.disabled = 'disabled';
+				leftButton.innerHTML = 'Краткое описание';
+				this.leftButton = leftButton;
+
+				let rightButton = document.createElement('div');
+				rightButton.className = 'tab';
+				// rightButton.disabled = 'disabled';
+				rightButton.innerHTML = 'Инструкция по приготовлению';
+				this.rightButton = rightButton;
+
+				let description = document.createElement('textarea');
+				description.classList.add('instruction');
+				description.classList.add('input');
+
+				let instruction = document.createElement('textarea');
+				instruction.classList.add('instruction');
+				instruction.classList.add('input');
+	
+
+				let descriptionElement = document.createElement('div');
+				descriptionElement.className = 'inputDescription';
+				descriptionElement.appendChild(leftButton);
+				descriptionElement.appendChild(rightButton);
+				descriptionElement.appendChild(description);
+				descriptionElement.appendChild(instruction);
+				this.htmlElement.appendChild(descriptionElement);
+
+				this.changeField();
+			}
+
+			createBlock() {
+				this.createNameInput();
+				this.createAlternativeNameInput();
+				this.createDescriptionField()
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+		class doubleButtonObject {
+			constructor() {
+				this.htmlElement = null;
+				this.listItems = []
+
+			}
+			createObjectElement() {
+				let obj = document.createElement('div');
+				obj.className = 'double-button';
+				this.htmlElement = obj;
+			}
+
+			createCleanButton() {
+				let button = document.createElement('button');
+				button.className = 'clean-button';
+				button.innerHTML = 'Очистить';
+				this.htmlElement.appendChild(button);
+			}
+
+			createSaveButton() {
+				let button = document.createElement('button');
+				button.className = 'save-button';
+				button.innerHTML = 'Сохранить';
+				this.htmlElement.appendChild(button);
+			}
+
+			createBlock() {
+				this.createCleanButton();
+				this.createSaveButton();
+			}
+
+			showObject(to) {
+				to.appendChild(this.htmlElement);
+			}
+		}
+
+//Input section -----------------------------------------------------------------------------
+	    let objects = {
+	    	'glassesList': [],
+	    	typesList : ['Long drinks', 'Short drinks', 'Шоты', 'Апперитивы', 'Диджестивы', 'Горячие', 'Молочные', 'Десертные', 'Слоистые', 'Дейзи', 'Джулепы',  'Кардинал', 'Коллинз', 'Куллер', 'Сангари', 'Сауэр', 'Слинг', 'Смэш', 'Суизл', 'Физз', 'Фикс', 'Флипп', 'Фраппе'],
+	    	typesList2 : ['Шейк', 'Бильд', 'Стир', 'Маддл', 'Блэнд', 'Лейер'],
+	    	strongnessList : ['Безалкогольные', 'Слабоградусные', 'Полукрепкие', 'Крепкие'],
+	    	drinkBaseList : ['Абсент', 'Водка', 'Джин', 'Виски', 'Бренди', 'Кальвадос', 'Ликёр', 'Текила','Ром', 'Коньяк', 'Вино', 'Мартини'],
+	    }
+
+		let drinkwareCounter =0;
+		let drinkwaresList = [
+			{
+				id: 'shot',
+				name: 'Shot',
+				url: 'images/shot.png',
+				description: 'Стопка',
+			},
+
+			{
+				id: 'glass',
+				name: 'Glass',
+				url: 'images/glass.png',
+				description: 'Бокал для белого вина',
+			},
+
+			{
+				id: 'cup',
+				name: 'Cup',
+				url: 'images/cup.png',
+				description: 'Стакан',
+			},
+
+			{
+				id: 'matriniGlass',
+				name: 'Matrini',
+				url: 'images/martini.png',
+				description: 'Бокал для мартини',
+			}
+		];
+		let typesList = ['Long drinks', 'Short drinks', 'Шоты', 'Апперитивы', 'Диджестивы', 'Горячие', 'Молочные', 'Десертные', 'Слоистые', 'Дейзи', 'Джулепы',  'Кардинал', 'Коллинз', 'Куллер', 'Сангари', 'Сауэр', 'Слинг', 'Смэш', 'Суизл', 'Физз', 'Фикс', 'Флипп', 'Фраппе'];
+		let strongnessList = ['Безалкогольные', 'Слабоградусные', 'Полукрепкие', 'Крепкие'];
+		let drinkBaseList = ['Абсент', 'Водка', 'Джин', 'Виски', 'Бренди', 'Кальвадос', 'Вода', 'Сироп', 'Ликёр', 'Текила','Ром', 'Коньяк', 'Вино', 'Мартини'];
+		let drinkwaresDrinksObj = [
+			['Сауэр', 'Слинг', 'Смэш', 'Суизл', 'Физз', 'Фикс', 'Флипп', 'Фраппе'],
+			['Слоистые', 'Дейзи', 'Джулепы',  'Кардинал', 'Коллинз', 'Куллер', 'Сангари'],
+			['Long drinks', 'Молочные', 'Десертные'],
+			['Short drinks', 'Шоты', 'Апперитивы', 'Диджестивы', 'Горячие', ]
+		]
+		let strongnessObj = [
+			['Вода', 'Сироп', 'Ликёр'],
+			['Бренди', 'Кальвадос'],
+			['Вино', 'Мартини'],
+			['Абсент', 'Водка', 'Джин', 'Виски', 'Текила','Ром', 'Коньяк' ]
+		];
+		let ingredients = ['Добавить ингридиент', 'Абсент', 'Водка', 'Джин', 'Виски', 'Бренди', 'Кальвадос', 'Вода', 'Сироп', 'Ликёр', 'Текила','Ром', 'Коньяк', 'Вино', 'Мартини']
+		let portionScale = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',];
+		let timeScale = ['7', '10', '15', '20', '30', '45', '60', '90', '120'];
+		let complexityScale = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',];
+		let methods = ['Не важно', 'В шейкере', 'Билд', 'Стир', 'Бленд',]
+		let decorations = ['Апельсин', 'Мята', 'Взбитые сливки', 'Виноград', 'Вишня', 'Мандарин', 'Долька лимона', 'Корица', 'Мускатный орех','Ананас', 'Оливка', 'Зонтик', 'Соломинка', ];
+		let tags = ['Овощные', 'Огненные', 'Освежающие', 'Пикантные', 'Пунш', 'С мороженым', 'Сладкие', 'Солёные', 'Острые', 'Крепкие','Со льдом', 'С украшением', 'Крепкие', 'Безалкогольные'];
+
+//Generation section -----------------------------------------------------------------------------
+
+	let app = new Sommelier();
+	app.createObjectElement();
+	app.showObject(document.body);
+	app.createBlock();
+
+	</script>
+	
+</body>
+</html>
