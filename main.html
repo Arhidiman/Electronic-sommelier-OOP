@@ -26,6 +26,7 @@
 				obj.style.backgroundColor = this.backgroundColor;
 				obj.style.borderRadius = '10px';
 				obj.id = 'sommelier';
+
 				this.htmlElement = obj;
 			}
 
@@ -64,7 +65,6 @@
 				footer.createBlock();
 			}
 		}
-
 
 		class TopSectionObject {
 				constructor() {
@@ -328,7 +328,6 @@
 				}
 			}
 
-
 			createBlock() {
 				let block1 = new BlockObject(4, portionScale, 'Порции', '', '+ 2 порции');
 				block1.createObjectElement();
@@ -380,7 +379,6 @@
 				to.appendChild(this.htmlElement);
 			}
 
-
 			switchAll(block) {
 				for(let i = 0; i < block.list.length; i++) {
 					block.list[i].htmlElement.className = 'checkbox';
@@ -395,7 +393,6 @@
 					}	
 				}
 			}
-
 
 			getPixelsNumber(pixels) {
 				return(Number(pixels.substring(0, pixels.length - 2)));
@@ -420,9 +417,6 @@
 				block3.showObject(this.htmlElement);
 				block3.createBlock();
 				this.switchAll(block2);
-
-
-
 			}
 		}
 
@@ -437,7 +431,6 @@
 				obj.id = 'header';
 				obj.className = 'section';
 				this.htmlElement = obj;
-
 			}
 
 			showObject(to) {
@@ -460,6 +453,7 @@
 				this.htmlElement = null;
 
 			}
+
 			createObjectElement() {
 				let obj = document.createElement('footer');
 				obj.id = 'footer';
@@ -500,8 +494,6 @@
 				this.container = null;
 				this.rightArrow = null;
 				if(this.type == 2) {this.list = null};
-	
-
 			}
 
 			createObjectElement() {
@@ -510,17 +502,12 @@
 				obj.style.borderRadius = '20px';
 				obj.style.width = this.width;
 				obj.style.margin = this.width;
-
 				this.htmlElement = obj;
-
 			}
-			changeState(FieldName, fieldValue){
 
-			}
 			showObject(to) {
 				to.appendChild(this.htmlElement);
 			}
-
 
 			getPixelsNumber(pixels) {
 				return(Number(pixels.substring(0, pixels.length - 2)));
@@ -532,14 +519,12 @@
 				blockHeader.showObject(this.htmlElement);
 				blockHeader.createBlock();
 				this.headerElement = blockHeader.htmlElement
-
 				
 				let blockBody = new BlockBodyObject(this.type, this.input, this.text);
 				blockBody.createObjectElement();
 				blockBody.showObject(this.htmlElement);
 				blockBody.createBlock();
 				this.bodyElement = blockBody.htmlElement;
-	
 
 				this.list = blockBody.list;
 				this.leftArrow = blockBody.leftArrow;
@@ -566,7 +551,6 @@
 				let obj = document.createElement('div');
 				obj.className = 'block-header';
 				this.htmlElement = obj;
-
 			}
 
 			showObject(to) {
@@ -636,13 +620,6 @@
 			}
 
 			createBlock() {
-				//Animation variables
-				// let deltaX = 0;
-				// let slideDeltaX = 0;
-				// let sliderCounter = 0;
-				// let isMoveRight = true;
-				// let isMoveLeft = false;
-
 				// Left arrow object
 				if(this.type == 1) {
 					let leftArrow = new ArrowObject();
@@ -662,8 +639,6 @@
 					leftArrow.htmlElement.addEventListener('mouseup', (e)=>{
 						e.target.style.borderRight = '10px solid #707070';
 					} );
-
-
 				}
 				// Container object
 				if(this.type !== 4) {
@@ -699,8 +674,6 @@
 
 					this.htmlElement.style.display = 'block';
 					this.htmlElement.style.backgroundColor = '#B7B7B7';
-
-					
 				}
 				
 				//Right arrow object
@@ -743,7 +716,6 @@
 				let obj = document.createElement('h2');
 				this.htmlElement = obj;
 				obj.innerHTML = this.headerTitle;
-
 			}
 
 			showObject(to) {
@@ -792,7 +764,6 @@
 				to.appendChild(this.htmlElement);
 			}
 		}
-
 
 		class blockContainerObject {
 			constructor(type, input) {
@@ -866,11 +837,7 @@
 					let minScrollerBottom = -scrollerMaxDeltaY/2;
 					let delta = 0;
 					let scrollTop = 0;
-
-					// console.log(contentHeight);
-					// console.log(containerHeight);
-					// console.log(this.htmlElement);
-					
+			
 					if (contentHeight > containerHeight) {
 						let scrollBox = new scrollObject();
 						scrollBox.createObjectElement();
@@ -1017,8 +984,6 @@
 					this.htmlElement.style.height = '95%';
 					this.htmlElement.style.width = '85%';
 				}
-
-				
 			}
 		}
 
@@ -1106,7 +1071,6 @@
 			}
 		}
 
-
 		//Lists section: type 2, 3, 5 only objects
 		class ListObject {
 			constructor(input) {
@@ -1136,15 +1100,6 @@
 					item.showObject(this.htmlElement);
 					this.listItems.push(item);
 				}
-
-
-
-				// for(let j = 0; j < typesList2.length; j++) {
-				// 	let item = new ListItemObject();
-				// 	item.createObjectElement();
-				// 	item.htmlElement.innerHTML = typesList2[j];
-				// 	this.listItems2.push(item);
-				// }
  			}
 
 			createOptionsArr() {
@@ -1164,35 +1119,6 @@
 
 			hide(object) {
 				object.htmlElement.remove();
-			}
-
-
-			// erase(l) {
-			// 			console.log(this.listItems[i]);
-			// 			this.hide(this.listItems[i]);
-			// 			this.listItems.splice(i, 1, this.listItems2[i]);
-			// 			// console.log(this.listItems);
-			// 			// console.log(this.listItems2);
-			// 			console.log(this.listItems2[i].htmlElement);
-			// 			console.log(this.listItems[i].htmlElement);
-			// 			this.htmlElement.insertBefore(this.listItems2[i].htmlElement, this.listItems[i].htmlElement);
-			// 			if(l >= 0) {this.redraw(l - 1)};
-			// }
-
-			redraw(l){
-				for (let i = 0; i <l ; i++){
-					try{
-						this.hide(this.listItems[i]);
-						// this.listItems.splice(i, 1, this.listItems2[i]);
-					}
-					catch(ex){
-						console.log(ex);
-					}
-				}
-				for(let j = 0; j < this.listItems2.length; j++) {
-					
-					this.listItems2[j].showObject(this.htmlElement);
-				}
 			}
 
 			createBlock() {	
@@ -1226,24 +1152,18 @@
 			}
 		}
 
-			
-
-
 		class scrollObject {
 			constructor() {
 				this.htmlElement = null;
 				this.scroller = null;
 				this.topArrow = null;
 				this.bottomArrow = null;
-
-
 			}
+
 			createObjectElement() {
 				let obj = document.createElement('li');
 				obj.className = 'scroll'
 				this.htmlElement = obj;
-		
-
 			}
 
 			showObject(to) {
@@ -1275,7 +1195,6 @@
 				
 					e.target.style.borderBottom  = '10px solid #707070';
 				} )
-
 
 				let scroller = new ScrollerObject();
 				scroller.createObjectElement();
@@ -1313,6 +1232,7 @@
 				this.htmlElement = null;
 
 			}
+
 			createObjectElement() {
 				let obj = document.createElement('li');
 				obj.className = 'scroll-bar';
@@ -1331,8 +1251,8 @@
 				this.htmlElement = null;
 				this.input = input;
 				this.listItems = []
-
 			}
+
 			createObjectElement() {
 				let obj = document.createElement('div');
 				obj.className = 'scale-box ';
@@ -1355,13 +1275,11 @@
 					this.listItems.push(value);
 					scaleValues.appendChild(value);
 				}
-
 				let scaleBar = document.createElement('div');
 				scaleBar.className = 'scale-bar';
 				this.htmlElement.appendChild(scaleBar);
 			}
 		}
-
 
 		class CheckboxObject {
 			constructor(text) {
@@ -1401,8 +1319,6 @@
 				this.htmlElement = null;
 				this.leftButton = null;
 				this.rightButton = null;
-
-				
 			}
 			createObjectElement() {
 				let obj = document.createElement('form');
@@ -1413,18 +1329,16 @@
 
 			changeField() {
 				this.leftButton.onclick = (e)=> {
-
-						document.getElementsByClassName('instruction')[0].style.display = 'none';
-						document.getElementsByClassName('instruction')[1].style.display = 'block';
-						document.getElementsByClassName('tab')[1].classList.remove('tab-selected')
-						e.target.classList.add('tab-selected');
-
+					document.getElementsByClassName('instruction')[0].style.display = 'none';
+					document.getElementsByClassName('instruction')[1].style.display = 'block';
+					document.getElementsByClassName('tab')[1].classList.remove('tab-selected')
+					e.target.classList.add('tab-selected');
 				}
 				this.rightButton.onclick = (e)=> {
-						document.getElementsByClassName('instruction')[0].style.display = 'block';
-						document.getElementsByClassName('instruction')[1].style.display = 'none';
-						document.getElementsByClassName('tab')[0].classList.remove('tab-selected')
-						e.target.classList.add('tab-selected');
+					document.getElementsByClassName('instruction')[0].style.display = 'block';
+					document.getElementsByClassName('instruction')[1].style.display = 'none';
+					document.getElementsByClassName('tab')[0].classList.remove('tab-selected')
+					e.target.classList.add('tab-selected');
 				}				
 			}
 
@@ -1447,13 +1361,11 @@
 				let leftButton = document.createElement('div');
 				leftButton.classList.add('tab');
 				leftButton.classList.add('tab-selected');
-				// leftButton.disabled = 'disabled';
 				leftButton.innerHTML = 'Краткое описание';
 				this.leftButton = leftButton;
 
 				let rightButton = document.createElement('div');
 				rightButton.className = 'tab';
-				// rightButton.disabled = 'disabled';
 				rightButton.innerHTML = 'Инструкция по приготовлению';
 				this.rightButton = rightButton;
 
@@ -1465,7 +1377,6 @@
 				instruction.classList.add('instruction');
 				instruction.classList.add('input');
 	
-
 				let descriptionElement = document.createElement('div');
 				descriptionElement.className = 'inputDescription';
 				descriptionElement.appendChild(leftButton);
